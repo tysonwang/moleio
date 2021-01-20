@@ -12,11 +12,10 @@ const [data,arr] = mole.get({url,params,data,options});
 const [data,arr] = mole.post({url,params,data,options});
 const [data,arr] = mole.put({url,params,data,options});
 
+```javascript
+// <!-- 关于options的配置 -->
 
-<!-- 关于options的配置 -->
-
-<!-- options  -->
-`
+// <!-- options  -->
 {method: "GET",
  baseURL: "",
  responseType:'',
@@ -27,4 +26,4 @@ const [data,arr] = mole.put({url,params,data,options});
  requestInterceptor:'',
  responseInterceptor:'',
  }
-`
+```

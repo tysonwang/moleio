@@ -9,9 +9,16 @@ class Mole extends Base {
     
     request(options) {
         const engine = new this.engine();
-        return new Promise(resolve,reject=>{
+        return new Promise((resolve,reject)=>{
            return resolve(data);
         })
+    }
+    all(promises) {
+        return Promise.all(promises)
+    }
+
+    race(){
+        return Promise.race(promises)
     }
 }
 

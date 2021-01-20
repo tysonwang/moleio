@@ -2,21 +2,23 @@ export default class Base{
     constructor(engine){
         const resolve = Symbol('resolve');
         const reject = Symbol('reject');
-        this.engine = engine|| Base.createXHR();
-        this.interceptor = {
-            response: {
-                use(handler, onerror) {
-                    this.handler = handler;
-                    this.onerror = onerror;
-                }
-            },
-            request: {
-                use(handler) {
-                    this.handler = handler;
-                }
+        this.lock= function (){
+            if(!resolve){
+                this.interceptor.promise = new Promise((_resolve,_reject)=>{
+                    this[resolve] = _resolve;
+                    this[reject] = _reject; 
+                }) 
             }
         }
-        
+        this.unlock= function (){
+            if(resolve){
+                this[resolve]();
+                delete this.interceptor.promise;
+                this[reject] = this[resolve] = null;
+                
+            } 
+        } 
+        this.engine = engine|| Base.createXHR();
         this.config = {
             method:'GET',
             headers:{},
@@ -30,6 +32,10 @@ export default class Base{
             customHeaders:{}
         }
     }
+
+    error(){
+    }
+
     static createXHR() {
         if (typeof XMLHttpRequest != "undefined") {
             return new XMLHttpRequest();
@@ -59,6 +65,7 @@ export default class Base{
         this.requestInterceptor = requestInterceptor;
         this.responseInterceptor = responseInterceptor;
     }
+    
     lockQueue(promise,callback){
        if(promise){
            promise.then(()=>{callback()});
@@ -67,10 +74,9 @@ export default class Base{
        }
     }
     lock(resolve){
-if(!resolve){
-    this. = new Promise()
-}
-    }
+      this.lock();
+      }
+    
     unlock(){
 
     }

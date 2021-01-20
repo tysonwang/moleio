@@ -17,20 +17,29 @@ function () {
   function Base(engine) {
     _classCallCheck(this, Base);
 
-    this.engine = engine || Base.createXHR();
-    this.interceptor = {
-      response: {
-        use: function use(handler, onerror) {
-          this.handler = handler;
-          this.onerror = onerror;
-        }
-      },
-      request: {
-        use: function use(handler) {
-          this.handler = handler;
-        }
+    var resolve = Symbol('resolve');
+    var reject = Symbol('reject');
+
+    this.lock = function () {
+      var _this = this;
+
+      if (!resolve) {
+        this.interceptor.promise = new Promise(function (_resolve, _reject) {
+          _this[resolve] = _resolve;
+          _this[reject] = _reject;
+        });
       }
     };
+
+    this.unlock = function () {
+      if (resolve) {
+        this[resolve]();
+        delete this.interceptor.promise;
+        this[reject] = this[resolve] = null;
+      }
+    };
+
+    this.engine = engine || Base.createXHR();
     this.config = {
       method: 'GET',
       headers: {},
@@ -48,6 +57,9 @@ function () {
   }
 
   _createClass(Base, [{
+    key: "error",
+    value: function error() {}
+  }, {
     key: "middleware",
     value: function middleware(requestInterceptor, responseInterceptor) {
       // 请求与相应的拦截器
@@ -65,6 +77,14 @@ function () {
         callback();
       }
     }
+  }, {
+    key: "lock",
+    value: function lock(resolve) {
+      this.lock();
+    }
+  }, {
+    key: "unlock",
+    value: function unlock() {}
   }], [{
     key: "createXHR",
     value: function createXHR() {

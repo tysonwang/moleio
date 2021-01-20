@@ -67,15 +67,14 @@ function () {
       this.responseInterceptor = responseInterceptor;
     }
   }, {
-    key: "lockQueue",
-    value: function lockQueue(promise, callback) {
-      if (promise) {
-        promise.then(function () {
-          callback();
-        });
-      } else {
-        callback();
-      }
+    key: "requestInterceptor",
+    value: function requestInterceptor(request) {
+      return request;
+    }
+  }, {
+    key: "responseInterceptor",
+    value: function responseInterceptor(response, err) {
+      return response;
     }
   }, {
     key: "lock",

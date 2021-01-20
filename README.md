@@ -9,9 +9,9 @@ const imgUploader = require('imgUploader')
 mole.middle(requestInterceptor,responseInterceptor).use(imgUploader); // 全局拦截
 const [data,err] = mole.request(options); 
 const moleio = new mole(); //默认不传入参数为浏览器端使用，传入 node,wx,my,taro ...可更换请求环境
-const [data,arr] = mole.get({url,params,data,options});
-const [data,arr] = mole.post({url,params,data,options});
-const [data,arr] = mole.put({url,params,data,options});
+const [data,arr] = mole.get({url,data,options});
+const [data,arr] = mole.post({url,data,options});
+const [data,arr] = mole.put({url,data,options});
 ```
 ```js
 // <!-- 关于options的配置 -->

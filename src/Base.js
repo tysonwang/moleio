@@ -2,18 +2,18 @@ export default class Base {
     constructor(engine) {
         const resolve = Symbol('resolve');
         const reject = Symbol('reject');
-        this.lock = function () {
+        this.lock = function (interceptor) {
             if (!resolve) {
-                this.interceptor.promise = new Promise((_resolve, _reject) => {
+                this[interceptor]['p'] = new Promise((_resolve, _reject) => {
                     this[resolve] = _resolve;
                     this[reject] = _reject;
                 })
             }
         }
-        this.unlock = function () {
+        this.unlock = function (interceptor) {
             if (resolve) {
                 this[resolve]();
-                delete this.interceptor.promise;
+                delete this[interceptor][p];
                 this[reject] = this[resolve] = null;
 
             }
@@ -24,16 +24,14 @@ export default class Base {
             headers: {},
             timeout: 0,
             params: {},
+            baseUrl: "",
             withCredentials: false,
+            parseJson:true,
             fileChunkSize: 2 * 1024 * 1024, //2M
             fileType: 'blob', //上传文件类型 备用类型  base64 ,buffer ,stream
-            contentType: 'application/x-www-form-urlencoded',
             responseType: 'json',
             customHeaders: {}
         }
-    }
-
-    error() {
     }
 
     static createXHR() {
@@ -59,14 +57,11 @@ export default class Base {
             throw new Error("平台不支持ajax请求");
         }
     }
-
     middleware(requestInterceptor, responseInterceptor) {
         // 请求与相应的拦截器
         this.requestInterceptor = requestInterceptor;
         this.responseInterceptor = responseInterceptor;
     }
-
-
     requestInterceptor(request) {
         return request;
 
@@ -75,12 +70,4 @@ export default class Base {
         return response;
     }
 
-    
-    lock(resolve) {
-        this.lock();
-    }
-
-    unlock() {
-
-    }
 }

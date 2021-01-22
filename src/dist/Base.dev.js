@@ -20,21 +20,21 @@ function () {
     var resolve = Symbol('resolve');
     var reject = Symbol('reject');
 
-    this.lock = function () {
+    this.lock = function (interceptor) {
       var _this = this;
 
       if (!resolve) {
-        this.interceptor.promise = new Promise(function (_resolve, _reject) {
+        this[interceptor]['p'] = new Promise(function (_resolve, _reject) {
           _this[resolve] = _resolve;
           _this[reject] = _reject;
         });
       }
     };
 
-    this.unlock = function () {
+    this.unlock = function (interceptor) {
       if (resolve) {
         this[resolve]();
-        delete this.interceptor.promise;
+        delete this[interceptor][p];
         this[reject] = this[resolve] = null;
       }
     };
@@ -45,21 +45,19 @@ function () {
       headers: {},
       timeout: 0,
       params: {},
+      baseUrl: "",
       withCredentials: false,
+      parseJson: true,
       fileChunkSize: 2 * 1024 * 1024,
       //2M
       fileType: 'blob',
       //上传文件类型 备用类型  base64 ,buffer ,stream
-      contentType: 'application/x-www-form-urlencoded',
       responseType: 'json',
       customHeaders: {}
     };
   }
 
   _createClass(Base, [{
-    key: "error",
-    value: function error() {}
-  }, {
     key: "middleware",
     value: function middleware(requestInterceptor, responseInterceptor) {
       // 请求与相应的拦截器
@@ -76,14 +74,6 @@ function () {
     value: function responseInterceptor(response, err) {
       return response;
     }
-  }, {
-    key: "lock",
-    value: function lock(resolve) {
-      this.lock();
-    }
-  }, {
-    key: "unlock",
-    value: function unlock() {}
   }], [{
     key: "createXHR",
     value: function createXHR() {

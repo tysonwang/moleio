@@ -1,6 +1,7 @@
 import utils from './utils';
 import engine from './env';
 import Base from './Base';
+import Request from './Request';
 class Mole extends Base {
     constructor(engine) {
         const launch = Symbol('launch');
@@ -211,6 +212,7 @@ class Mole extends Base {
         }
 
         super(engine);
+<<<<<<< HEAD
     }
     
 
@@ -447,12 +449,16 @@ class Mole extends Base {
 
     race() {
         return Promise.race(promises)
+=======
+        this.request = new Request(this);
+        ['GET', 'POST', 'PUT', 'DELETE'].forEach(item => {
+            Mole.prototype[item] = function ({ url, data, params, options }) {
+                return this.request(url,data,util.merge({method:item},options)).then(data => [null, data]).catch(err => [err, null]);
+            }
+        })
+       this.all=(promises)=>Promise.all(promises)
+       this.race = (promises)=>Promise.race(promises)
+>>>>>>> 2b66056c29646043f4b9ce1076d86d5a062f71b3
     }
 }
-
-['GET', 'POST', 'PUT', 'DELETE'].forEach(item => {
-    Mole.prototype[item] = function ({ url, data, params, options }) {
-        return this.request(options).then(data => [null, data]).catch(err => [err, null]);
-    }
-})
 export default Mole

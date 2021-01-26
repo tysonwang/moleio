@@ -1,5 +1,5 @@
 import utils from './utils';
-import adapter from './Adapter';
+import adapter from './adapter';
 import Base from './Base';
 class Mole {
     constructor(engine) {

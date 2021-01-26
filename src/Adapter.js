@@ -1,15 +1,9 @@
-export default class Adapter {
-    constructor(env) {
-        this.engine = engine || XMLHttpRequest;
+export default function  adapter(engine){
+    if(!engine){
+        return;
     }
-    open(options) {
-       env()
-    }
-    loadData() {
-
-    }
-    send(options){
-
+    switch(engine){
+        case 'wx':
+            return 
     }
 }
-// 该适配器实现非浏览器端的接口封装

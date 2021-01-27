@@ -1,9 +1,9 @@
 import utils from './utils';
-import engine from './env';
+import adapter from './adapter';
 import Base from './Base';
-import Request from './Request';
-class Mole extends Base {
+class Mole {
     constructor(engine) {
+<<<<<<< HEAD
         const launch = Symbol('launch');
         const getResult = Symbol('getResult');
         
@@ -213,13 +213,26 @@ class Mole extends Base {
 
         super(engine);
         this.request = new Request(this);
+=======
+        this.engine = adapter(engine) || XMLHttpRequest;
+        this.all = (promises) => Promise.all(promises)
+        this.race = (promises) => Promise.race(promises)
+>>>>>>> ce69edcbad8aba5ad3f94e5302eb01f124895e59
         ['GET', 'POST', 'PUT', 'DELETE'].forEach(item => {
-            Mole.prototype[item] = function ({ url, data, params, options }) {
-                return this.request(url,data,util.merge({method:item},options)).then(data => [null, data]).catch(err => [err, null]);
+            Mole.prototype[item] = function ({ url, data, options }) {
+                return this.request(url, data, util.merge({ method: item }, options)).then(data => [null, data]).catch(err => [err, null]);
             }
         })
-       this.all=(promises)=>Promise.all(promises)
-       this.race = (promises)=>Promise.race(promises)
+    }
+    create(options) {
+        new Mole();
+    }
+    request(url, data, options) {
+        const promise = new Promsie((resolve, reject) => {
+
+        })
+        return promise;
     }
 }
-export default Mole
+
+export default Mole;

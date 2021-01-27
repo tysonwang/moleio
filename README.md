@@ -13,6 +13,45 @@ const [data,arr] = mole.get({url,data,options});
 const [data,arr] = mole.post({url,data,options});
 const [data,arr] = mole.put({url,data,options});
 ```
+
+公用方法
+import mole from 'mole-io';
+mole.request().then()
+mole.get()
+mole.create();
+
+ //   this.engine.open()
+        //   this.engine.abort()
+        //   this.engine.getAllResponseHeaders();
+        //   getResponseHeader()
+        //   XMLHttpRequest.overrideMimeType()
+        //   setRequestHeader()
+        //   this.engine.timeout = '';
+        //   XMLHttpRequest.send()
+        //   this.engine.ontimeout = function(){
+        //   };
+        //   this.engine.send()
+
+
+        asdf.get()
+asdf.use()
+asdf.lock() //全部锁 asdf.request.lock() 请求锁
+asdf.unlock(); //全部解锁 asdf.response.unlock()
+asdf.unlock();
+asdf.cancel()// 全部取消  asdf.request.cancel() 取消 asdf.response.cancel()
+asdf.use(res, ree).plugin(); // 增强插件
+asdf.plugin(); //增强插件
+asdf.race()
+asdf.all()
+asdf.spread()
+asdf.config.asdf // 默认实例 newasdf.config
+
+import asdf from 'asdf';
+let newasdf = asdf.create(options);
+asdf.request(url, data, options)
+
+new asdf('wx');
+
 ```js
 // <!-- 关于options的配置 -->
 

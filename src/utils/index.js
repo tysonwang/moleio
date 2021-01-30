@@ -1,16 +1,23 @@
-class utils{
+const  utils = {
+    isObject(val) {
+        return val&& typeof val === 'object';
+      },
+    isPlainObject(obj){
+        let prototype = Object.getPrototypeOf(obj);
+        return this.type(obj)==='object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+    },
     callback(){
         console.log('hello world');
-    }
+    },
     type(ob) {
         return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase()
-    }
+    },
     isPromise(p){
             return p && p.then;
-    }
+    },
     isFormData(val) {
         return (typeof FormData !== 'undefined') && (val instanceof FormData);
-    }
+    },
     encode(val) {
         return encodeURIComponent(val)
             .replace(/%40/gi, '@')
@@ -20,7 +27,7 @@ class utils{
             .replace(/%20/g, '+')
             .replace(/%5B/gi, '[')
             .replace(/%5D/gi, ']');
-    }
+    },
     merge(a, b) {
         for (let key in b) {
             if (!a.hasOwnProperty(key)) {
@@ -30,7 +37,7 @@ class utils{
             }
         }
         return a;
-    }
+    },
     
     onresult(handler, data, type) {
         enqueueIfLocked(responseInterceptor.p, function () {
@@ -51,7 +58,7 @@ class utils{
                 reject(e)
             })
         })
-    }
+    },
 
     formatParams(data) {
         let str = "";
@@ -89,15 +96,23 @@ class utils{
 
         _encode(data, "");
         return str;
-    }
-    lockQueue(promise, callback) {
+    },
+    lockQueue(promise, callback,isCancel) {
         if (promise) {
             promise.then(() => { callback() });
         } else {
             callback()
         }
+    },
+    merge(a, b) {
+        for (let key in b) {
+            if (!a.hasOwnProperty(key)) {
+                a[key] = b[key];
+            } else if (this.isObject(b[key], 1) && this.isObject(a[key], 1)) {
+                this.merge(a[key], b[key])
+            }
+        }
+        return a;
     }
-
-    
 }
 export default utils;

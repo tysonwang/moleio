@@ -15,8 +15,8 @@ const [data,arr] = mole.put({url,data,options});
 ```
 
 公用方法
-import mole from 'mole-io';
-mole.request().then()
+import MoleIO from 'mole-io';
+MoleIO.mole.request().then()
 mole.get()
 mole.create();
 
@@ -33,7 +33,7 @@ mole.create();
         //   this.engine.send()
 
 
-        asdf.get()
+asdf.get()
 asdf.use()
 asdf.lock() //全部锁 asdf.request.lock() 请求锁
 asdf.unlock(); //全部解锁 asdf.response.unlock()

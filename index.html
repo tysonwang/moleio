@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div id='a'></div>    
+<div id='b'></div>
+<style>
+    #a{
+        width: 400px;
+        height: 400px;
+        position: absolute;
+        z-index: 1;
+        background-color: blue;
+        pointer-events: auto;
+    }
+    #b{
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        background-color: red;
+    }
+
+    
+</style>
+<script>
+   let a= document.querySelector('#a');
+   a.addEventListener('click',function(event){
+console.log(event.target)
+   },false)
+</script>
+</body>
+
+</html>

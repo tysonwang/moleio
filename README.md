@@ -31,9 +31,7 @@ mole.create();
         //   this.engine.ontimeout = function(){
         //   };
         //   this.engine.send()
-
-
-        asdf.get()
+        //   asdf.get()
 asdf.use()
 asdf.lock() //全部锁 asdf.request.lock() 请求锁
 asdf.unlock(); //全部解锁 asdf.response.unlock()

@@ -1,19 +1,30 @@
-const  utils = {
+const utils = {
     isObject(val) {
-        return val&& typeof val === 'object';
-      },
-    isPlainObject(obj){
-        let prototype = Object.getPrototypeOf(obj);
-        return this.type(obj)==='object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+        return val && typeof val === 'object';
     },
-    callback(){
+    isPlainObject(obj) {
+        let prototype = Object.getPrototypeOf(obj);
+        return this.type(obj) === 'object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+    },
+    deepCopy(source) {
+        if (typeof source != "object") {
+            return source;
+        }
+        var newObj = source.constructor === Array ? [] : {};  //开辟一块新的内存空间
+        for (var i in source) {
+            newObj[i] = deepCopy(source[i]);                 //通过递归实现深层的复制
+        }
+        return newObj;
+    },
+
+    callback() {
         console.log('hello world');
     },
     type(ob) {
         return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase()
     },
-    isPromise(p){
-            return p && p.then;
+    isPromise(p) {
+        return p && p.then;
     },
     isFormData(val) {
         return (typeof FormData !== 'undefined') && (val instanceof FormData);
@@ -38,7 +49,7 @@ const  utils = {
         }
         return a;
     },
-    
+
     onresult(handler, data, type) {
         enqueueIfLocked(responseInterceptor.p, function () {
             if (handler) {
@@ -97,7 +108,7 @@ const  utils = {
         _encode(data, "");
         return str;
     },
-    lockQueue(promise, callback,isCancel) {
+    lockQueue(promise, callback, isCancel) {
         if (promise) {
             promise.then(() => { callback() });
         } else {

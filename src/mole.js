@@ -1,9 +1,23 @@
 import utils from './utils';
 import adapter from './adapter';
-function handler() {
-  this.use = function (successHandler, errorHandler) {
-    this.successHandler = successHandler;
-    this.errorHandler = errorHandler;
+class Handler {
+  constructor(status) {
+    this.use = function (successHandler, errorHandler) {
+      this.successHandler = successHandler;
+      this.errorHandler = errorHandler;
+    }
+    this[status ? '_lock' : 'lock'] = () => {
+
+    }
+    this[status ? '_unlock' : 'unlock'] = () => {
+
+    }
+    this[status ? '_clear' : 'clear'] = () => {
+
+    }
+    this[status ? '_cancel' : 'cancel'] = () => {
+
+    }
   }
 }
 function onresult(handler, data, type) {
@@ -27,8 +41,6 @@ function onresult(handler, data, type) {
   })
 }
 function makeRequest(url, data, options) {
-
-
   if (utils.isObject(url)) {
     options = url;
     url = utils.trim(options.url);
@@ -56,15 +68,14 @@ function makeRequest(url, data, options) {
     }
   }
   let responseType = utils.trim(options.responseType || "")
-                let needQuery = ["GET", "HEAD", "DELETE", "OPTION"].indexOf(options.method) !== -1;
-                let dataType = utils.type(data);
-                let params = options.params || {};
+  let needQuery = ["GET", "HEAD", "DELETE", "OPTION"].indexOf(options.method) !== -1;
+  let dataType = utils.type(data);
+  let params = options.params || {};
   options = options || {};
   options.headers = options.headers || {};
 
 
   promise = new Promsie((resolve, reject) => {
-
     utils.lockQueue(this.interceptors.request.p, () => {
       utils.merge(options, this.config)
       let headers = options.headers;
@@ -93,97 +104,163 @@ function makeRequest(url, data, options) {
     })
   })
 }
-class Mole {
-  constructor(engine) {
-    this.config = {
+{
+  baseURL,  //请求的基地址
+    body, //请求的参数
+    headers, //自定义的请求头
+    method, // 请求方法
+    timeout, //本次请求的超时时间
+    url, // 本次请求的地址
+    withCredentials //跨域请求是否发送第三方cookie
+}
+
+{
+  data, //服务器返回的数据
+    engine, //请求使用的http engine(见下面文档),浏览器中为本次请求的XMLHttpRequest对象
+    headers, //响应头信息
+    request  //本次响应对应的请求信息
+}
+// --------------
+{
+  // `data` 由服务器提供的响应
+  data: { },
+
+  // `status` 来自服务器响应的 HTTP 状态码
+  status: 200,
+
+    // `statusText` 来自服务器响应的 HTTP 状态信息
+    statusText: 'OK',
+
+      // `headers` 服务器响应的头
+      headers: { },
+
+  // `config` 是为请求提供的配置信息
+  config: { },
+  // 'request'
+  // `request` is the request that generated this response
+  // It is the last ClientRequest instance in node.js (in redirects)
+  // and an XMLHttpRequest instance the browser
+  request: { }
+}
+class initConfig {
+  constructor() {
+    return {
       url: '',
       method: 'GET',
       baseURL: '',
-      transformRequest: [function (data) {
-        return data;
-      }],
-      transformResponse: [function (data) {
-        return data;
-      }],
-      headers: { 'X-Requested-With': 'XMLHttpRequest' },
-      params: {
-        ID: 12345
-      },
+      
+      headers: {},
+      params: {},
       paramsSerializer: function (params) {
-        return Qs.stringify(params, { arrayFormat: 'brackets' })
+        return qs.stringify(params, { arrayFormat: 'brackets' })
       },
-      data: {
-      },
+      data: {},
       timeout: 1000,
       withCredentials: false, // 默认的
-      adapter: function (config) {
-      },
-      auth: {
-        username: 'janedoe',
-        password: 's00pers3cret'
-      },
       responseType: 'json', // 默认的
-      xsrfCookieName: 'XSRF-TOKEN', // default
-      xsrfHeaderName: 'X-XSRF-TOKEN', // 默认的
+      parseJson: true,
       onUploadProgress: function (progressEvent) {
       },
       onDownloadProgress: function (progressEvent) {
       },
       maxContentLength: 2000,
-      validateStatus: function (status) {
-        return status >= 200 && status < 300; // 默认的
-      },
-      maxRedirects: 5, // 默认的
-      // httpAgent: new http.Agent({ keepAlive: true }),
-      // httpsAgent: new https.Agent({ keepAlive: true }),
-      proxy: {
-        host: '127.0.0.1',
-        port: 9000,
-        auth: {
-          username: 'mikeymike',
-          password: 'rapunz3l'
-        }
-      },
-      cancelToken: true
     }
+  }
+}
+class EngineAdapter {
+  constructor(engine) {
+    return engine || XMLHttpRequest;
 
-    this.interceptors.request = new handler();
-    this.interceptors.response = new handler();
-    this.engine = adapter(engine) || XMLHttpRequest;
-    this.all = (promises) => Promise.all(promises)
-    this.race = (promises) => Promise.race(promises)
-    ["get", "post", "put", "patch", "head", "delete"].forEach(e => {
-      Mole.prototype[e] = function (url, data, option) {
-        return this.request(url, data, utils.merge({ method: e }, option))
-      }
-    })
-    ["lock", "unlock", "clear"].forEach(e => {
-      Mole.prototype[e] = function () {
-        this.interceptors.request[e]();
-      }
-    });
+  }
+}
+class Mole {
+  constructor(engine) {
+    this.config = new initConfig();
+    this.interceptors.request = new Handler(false);
+    this.interceptors.response = new Handler(true);
+    this.engine = new EngineAdapter(engine);
+    // extendsPlugin(this)
+    // ['all', 'race'].forEach(item => {
+    //   this[item] = (promises) => Promise[item](promises)
+    // })
+    // ["get", "post", "put", "patch", "head", "delete"].forEach(e => {
+    //   Mole.prototype[e] = function (url, data, option) {
+    //     return this.request(url, data, utils.merge({ method: e }, option))
+    //   }
+    // })
+    // ["lock", "unlock", "clear", 'cancel'].forEach(e => {
+    //   Mole.prototype[e] = function () {
+    //     this.interceptors.request[e]();
+    //   }
+    // });
+    // ['_lock', '_unlock', '_clear', '_cancel'].forEach(e => {
+    //   Mole.prototype[e] = function () {
+    //     this.interceptors.response[e]();
+    //   }
+    // })
 
-    this.spread = (callback) => {
-      return function (arr) {
-        return callback.apply(null, arr);
-      }
-    }
+    // this.spread = (callback) => {
+    //   return function (arr) {
+    //     return callback.apply(null, arr);
+    //   }
+    // }
     this.create = (engine) => {
       return new Mole(engine);
     }
   }
 
   request(url, data, options) {
-    return new makeRequest(url, data, options);
+    return new makeRequest(url, data, options, this);
   }
 }
 
 export default new Mole;
 
+function normalizeOptions(url, data, options, config) {
+      utils.merge(options, Object.assign({}, config)); //合并options
+      options.data = data||{}
+      options.method = options.method.toUpperCase();
+      if(url instanceof Object){
+        options = url;
+        url = options.url&&options.url.trim()||'';
+      }
+      options.url = options.url&&options.url.trim()||''
+      options.headers = options.headers ||{};
+      normalizeHeaderName(options.headers, 'Accept');
+      normalizeHeaderName(options.headers, 'Content-Type');
+      if(options.headerStrong){ // 如果要增强header的功能 
+        normalizeHeaderName()
+      }
 
-function makeRequest(url,data,options){
-  options = normalizeOptions(url,data,options);
-  queueIfLocked((this.interceptors.p,()=>{
-options,
+      return options;
+}
+function emitEngine(options) {
+
+  const {data,engine,baseURL} = options;
+  const baseUrl = baseURL||''
+}
+function makeRequest(url, data, options, instance) {
+  return new Promise((resolve, reject) => {
+    ifLock(interceptors.request.p, () => {
+      const { engine, interceptors, config } = instance;
+      options.engine = engine;
+      realOptions = normalizeOptions(url, data, options, config);
+      interceptors.request.successHandler
+      if (interceptors.request.successHandler) {
+        let resultOptions = interceptors.request.successHandler && (interceptors.request.successHandler.call() || realOptions) || realOptions;
+        if (!isPromise(resultOptions)) {
+          resultOptions = Promise.resolve(resultOptions)
+        }
+        resultOptions.then(o => {
+          if (o === realOptions && o.cancel === false) {
+            emitEngine(options)
+          } else {
+            resolve(o);
+          }
+        }, err => {
+          reject(err)
+        })
+      }
+    })
   })
 }

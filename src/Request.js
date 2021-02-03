@@ -8,7 +8,6 @@ export default class Request {
       })
       return promise;
     }
-
     enqueueIfLocked(promise, callback) {
         if (promise) {
             promise.then(() => {

@@ -1,7 +1,7 @@
 # moleio
 Promise based HTTP client for the browser ,wx,my,and node.js
 ## 功能描述
-类似于axios库，提供除浏览器端ajax请求外，该库提供了node端,微信小程序，uniapp,taro,支付宝小程序的支持，尤其是在文件上传上方面提供了 丰富的配置，入上传base64,file,blob,buffer等的支持,并提供进度与分片上传支持
+类似于axios库，提供除浏览器端ajax请求外，该库提供了node端,微信小程序，uniapp,taro,支付宝小程序的支持，尤其是在文件上传上方面提供了丰富的配置，支持上传base64,file,blob,buffer等的支持,并提供进度与分片上传支持
 ## 使用方式
 ```js
 const mole = require('moleio');
@@ -13,13 +13,11 @@ const [data,arr] = mole.get({url,data,options});
 const [data,arr] = mole.post({url,data,options});
 const [data,arr] = mole.put({url,data,options});
 ```
-
 公用方法
 import MoleIO from 'mole-io';
 MoleIO.mole.request().then()
 mole.get()
 mole.create();
-
  //   this.engine.open()
         //   this.engine.abort()
         //   this.engine.getAllResponseHeaders();
@@ -31,7 +29,11 @@ mole.create();
         //   this.engine.ontimeout = function(){
         //   };
         //   this.engine.send()
-
+// 888888888888888888
+// import Mole from 'mole-io';
+// Mole.request()
+// Mole.get()
+// Mole.create('wx');
 
 asdf.get()
 asdf.use()

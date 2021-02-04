@@ -6,6 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    asdfdsasda
+    <button onclick="goto()">goot</button>
+  <script>
+function goto(){
+    let link = document.createElement('a')
+    link.setAttribute('id','link');
+    link.href='http://www.baidu.com'
+    link.click()
+    link = null;
+}
+    
+  </script>
 </body>
 </html>

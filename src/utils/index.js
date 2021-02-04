@@ -1,19 +1,46 @@
-const  utils = {
-    isObject(val) {
-        return val&& typeof val === 'object';
-      },
-    isPlainObject(obj){
-        let prototype = Object.getPrototypeOf(obj);
-        return this.type(obj)==='object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+import adapter from 'Adapter';
+const utils = {
+    createEngine(engine) {
+        return adapter(engine) || this.createXHR();
     },
-    callback(){
+    createXHR() {
+        if (typeof XMLHttpRequest != "undefined") {
+            return new XMLHttpRequest();
+        } else if (typeof ActiveXObject != "undefined") {
+            if (typeof arguments.callee.activeXString != "string") {
+                var versions = ["MSXML2.XMLHttp.6.0", "MSXML2.XMLHttp.3.0",
+                    "MSXML2.XMLHttp"],
+                    i, len;
+                for (i = 0, len = versions.length; i < len; i++) {
+                    try {
+                        new ActiveXObject(versions[i]);
+                        arguments.callee.activeXString = versions[i];
+                        break;
+                    } catch (ex) {
+
+                    }
+                }
+            }
+            return new ActiveXObject(arguments.callee.activeXString);
+        } else {
+            throw new Error("平台不支持ajax请求");
+        }
+    },
+    isObject(val) {
+        return val && typeof val === 'object';
+    },
+    isPlainObject(obj) {
+        let prototype = Object.getPrototypeOf(obj);
+        return this.type(obj) === 'object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+    },
+    callback() {
         console.log('hello world');
     },
     type(ob) {
         return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase()
     },
-    isPromise(p){
-            return p && p.then;
+    isPromise(p) {
+        return p && p.then;
     },
     isFormData(val) {
         return (typeof FormData !== 'undefined') && (val instanceof FormData);
@@ -38,7 +65,7 @@ const  utils = {
         }
         return a;
     },
-    
+
     onresult(handler, data, type) {
         enqueueIfLocked(responseInterceptor.p, function () {
             if (handler) {
@@ -97,7 +124,7 @@ const  utils = {
         _encode(data, "");
         return str;
     },
-    lockQueue(promise, callback,isCancel) {
+    lockQueue(promise, callback, isCancel) {
         if (promise) {
             promise.then(() => { callback() });
         } else {

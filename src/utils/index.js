@@ -1,31 +1,4 @@
-import adapter from 'Adapter';
 const utils = {
-    createEngine(engine) {
-        return adapter(engine) || this.createXHR();
-    },
-    createXHR() {
-        if (typeof XMLHttpRequest != "undefined") {
-            return new XMLHttpRequest();
-        } else if (typeof ActiveXObject != "undefined") {
-            if (typeof arguments.callee.activeXString != "string") {
-                var versions = ["MSXML2.XMLHttp.6.0", "MSXML2.XMLHttp.3.0",
-                    "MSXML2.XMLHttp"],
-                    i, len;
-                for (i = 0, len = versions.length; i < len; i++) {
-                    try {
-                        new ActiveXObject(versions[i]);
-                        arguments.callee.activeXString = versions[i];
-                        break;
-                    } catch (ex) {
-
-                    }
-                }
-            }
-            return new ActiveXObject(arguments.callee.activeXString);
-        } else {
-            throw new Error("平台不支持ajax请求");
-        }
-    },
     isObject(val) {
         return val && typeof val === 'object';
     },
@@ -33,6 +6,17 @@ const utils = {
         let prototype = Object.getPrototypeOf(obj);
         return this.type(obj) === 'object' && (prototype === null || prototype == Object.getPrototypeOf({}))
     },
+    deepCopy(source) {
+        if (typeof source != "object") {
+            return source;
+        }
+        var newObj = source.constructor === Array ? [] : {};  
+        for (var i in source) {
+            newObj[i] = deepCopy(source[i]);               
+        }
+        return newObj;
+    },
+
     callback() {
         console.log('hello world');
     },
@@ -140,6 +124,9 @@ const utils = {
             }
         }
         return a;
+    },
+    buildUrl(options){
+        options.url.
     }
 }
 export default utils;

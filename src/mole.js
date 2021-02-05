@@ -2,15 +2,52 @@ import utils from './utils';
 import adapter from './adapter';
 class Handler {
   constructor(status) {
+    const _resolve = Symbol('resolve');
+    const _reject = Symbol('reject');
     this.use = function (successHandler, errorHandler) {
       this.successHandler = successHandler;
       this.errorHandler = errorHandler;
+
     }
+
     this[status ? '_lock' : 'lock'] = () => {
-
+      this.interceptors.p = new Promise((resolve, reject) => {
+        _resolve = resolve;
+        _reject = reject;
+      })
     }
-    this[status ? '_unlock' : 'unlock'] = () => {
 
+    function _clear() {
+      interceptor.p = resolve = reject = null;
+  }
+
+  utils.merge(interceptor, {
+      lock() {
+          if (!resolve) {
+              interceptor.p = new Promise((_resolve, _reject) => {
+                  resolve = _resolve
+                  reject = _reject;
+              })
+          }
+      },
+      unlock() {
+          if (resolve) {
+              resolve()
+              _clear();
+          }
+      },
+      clear() {
+          if (reject) {
+              reject("cancel");
+              _clear();
+          }
+      }
+
+      
+    this[status ? '_unlock' : 'unlock'] = () => {
+if(_resovle){
+
+}
     }
     this[status ? '_clear' : 'clear'] = () => {
 
@@ -19,91 +56,7 @@ class Handler {
 
     }
   }
-}
-function onresult(handler, data, type) {
-  enqueueIfLocked(responseInterceptor.p, function () {
-    if (handler) {
-      //如果失败，添加请求信息
-      if (type) {
-        data.request = options;
-      }
-      let ret = handler.call(responseInterceptor, data, Promise)
-      data = ret === undefined ? data : ret;
-    }
-    if (!isPromise(data)) {
-      data = Promise[type === 0 ? "resolve" : "reject"](data)
-    }
-    data.then(d => {
-      resolve(d)
-    }).catch((e) => {
-      reject(e)
-    })
-  })
-}
-function makeRequest(url, data, options) {
-  if (utils.isObject(url)) {
-    options = url;
-    url = utils.trim(options.url);
-  }
-  let baseUrl = utils.trim(options.baseURL || "");
-  if (!url && isBrowser && !baseUrl) url = location.href;
-  if (url.indexOf("http") !== 0) {
-    let isAbsolute = url[0] === "/";
-    if (!baseUrl && isBrowser) {
-      let arr = location.pathname.split("/");
-      arr.pop();
-      baseUrl = location.protocol + "//" + location.host + (isAbsolute ? "" : arr.join("/"))
-    }
-    if (baseUrl[baseUrl.length - 1] !== "/") {
-      baseUrl += "/"
-    }
-    url = baseUrl + (isAbsolute ? url.substr(1) : url)
-    if (isBrowser) {
 
-      // Normalize the url which contains the ".." or ".", such as
-      // "http://xx.com/aa/bb/../../xx" to "http://xx.com/xx" .
-      let t = document.createElement("a");
-      t.href = url;
-      url = t.href;
-    }
-  }
-  let responseType = utils.trim(options.responseType || "")
-  let needQuery = ["GET", "HEAD", "DELETE", "OPTION"].indexOf(options.method) !== -1;
-  let dataType = utils.type(data);
-  let params = options.params || {};
-  options = options || {};
-  options.headers = options.headers || {};
-
-
-  promise = new Promsie((resolve, reject) => {
-    utils.lockQueue(this.interceptors.request.p, () => {
-      utils.merge(options, this.config)
-      let headers = options.headers;
-      headers[contentType] = headers[contentType] || headers[contentTypeLowerCase] || "";
-      delete headers[contentTypeLowerCase]
-      options.body = data || options.body;
-      url = utils.trim(url || "");
-      options.method = options.method.toUpperCase();
-      options.url = url;
-      let ret = options;
-      if (this.interceptors.request.successHandler) {
-        ret = this.interceptors.request.successHandler.call(this.interceptors.request, options, Promise) || options;
-      }
-      if (!isPromise(ret)) {
-        ret = Promise.resolve(ret)
-      }
-      ret.then((d) => {
-        if (d === options) {
-          makeRequest(d)
-        } else {
-          resolve(d)
-        }
-      }, (err) => {
-        reject(err)
-      })
-    })
-  })
-}
 {
   baseURL,  //请求的基地址
     body, //请求的参数
@@ -259,7 +212,7 @@ function buildUrl(options) {
   }
   return url;
 }
-function emitEngine(options) {
+function emitEngine(options, interceptors, resolve, reject) {
   const contentType = 'application/x-www-form-urlencoded';
   const { data, engine, baseURL, params } = options;
   const originData = Object.assign({}, data);
@@ -275,14 +228,29 @@ function emitEngine(options) {
   }
   engine.timeout = options.timeout;
   engine.withCredentials = options.withCredentials;
-  engine.responseType = options.responseType;
   engine.open(options.method, url);
+  engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
   engine.onreadystatechange = () => {
-    // xmlhttp.responseText
-    if(engine.readyState==4 && engine.status>=200&&engine.status<300||engine.status==304){
-     settle(response,data , 0)
-    }else{
-      settle(response,data,1)
+    // xmlHttp.responseText
+    type = ['document json text ms-stream array-buffer']
+    let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
+    let headers = {};
+    let items = (engine.getAllResponseHeaders() || "").split("\r\n");
+    items.pop();
+    items.forEach((e) => {
+      if (!e) return;
+      let key = e.split(":")[0]
+      headers[key] = engine.getResponseHeader(key)
+    })
+
+    let data = { data: response, headers, options, status: engine.status, statusText: engine.statusText };
+    if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
+      if (response.getResponseHeader('Content-Type').includes('json')) {
+        responseData = JSON.parse(responseData);
+      }
+      settle(interceptors.response.successHandler, data, resolve, reject)
+    } else {
+      settle(interceptors.response.errorHandler, data, resolve, reject)
     }
   }
   if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
@@ -296,22 +264,22 @@ function emitEngine(options) {
     if (key === 'Content-Type' && originData instanceof FormData) {
       delete options.headers[key];
     }
-    engine.setRequestHeader(key,options.headers[key])
+    engine.setRequestHeader(key, options.headers[key])
   }
   engine.send(query ? null : data);
-
   engine.onerror = () => {
-settle(0)
+    settle(interceptors.response.errorHandler, {}, resolve, reject)
   }
   engine.ontimeout = () => {
-    settle(0)
-
+    settle(interceptors.response.errorHandler, {}, resolve, reject)
   }
   engine.onabort = () => {
   }
 }
 
-
+function settle(handler, data, resolve, reject) {
+  if ()
+}
 function makeRequest(url, data, options, instance) {
   return new Promise((resolve, reject) => {
     ifLock(interceptors.request.p, () => {
@@ -326,7 +294,7 @@ function makeRequest(url, data, options, instance) {
         }
         resultOptions.then(o => {
           if (o === realOptions && o.cancel === false) {
-            emitEngine(options)
+            emitEngine(options, interceptors, resolve, reject)
           } else {
             resolve(o);
           }

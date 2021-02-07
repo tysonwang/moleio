@@ -16,10 +16,6 @@ const utils = {
         }
         return newObj;
     },
-
-    callback() {
-        console.log('hello world');
-    },
     type(ob) {
         return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase()
     },

@@ -34,9 +34,9 @@ function emitEngine(options, interceptors, resolve, reject) {
         if (response.getResponseHeader('Content-Type').includes('json')) {
           responseData = JSON.parse(responseData);
         }
-        settle(interceptors.response.successHandler, data, resolve, reject)
+        settle(interceptors.response.successHandler, data, resolve)
       } else {
-        settle(interceptors.response.errorHandler, data, resolve, reject)
+        settle(interceptors.response.errorHandler, data, reject)
       }
     }
     if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
@@ -54,11 +54,12 @@ function emitEngine(options, interceptors, resolve, reject) {
     }
     engine.send(query ? null : data);
     engine.onerror = () => {
-      settle(interceptors.response.errorHandler, {}, resolve, reject)
+      settle(interceptors.response.errorHandler, {},reject)
     }
     engine.ontimeout = () => {
-      settle(interceptors.response.errorHandler, {}, resolve, reject)
+      settle(interceptors.response.errorHandler, {},reject)
     }
     engine.onabort = () => {
+      settle(interceptors.response.errorHandler, {},reject)
     }
   }

@@ -1,35 +1,38 @@
 class Handler {
     constructor(status) {
-        const _resolve = Symbol('resolve');
-        const _reject = Symbol('reject');
+        const resolve = Symbol('resolve');
+        const reject = Symbol('reject');
         this.use = function (successHandler, errorHandler) {
-            this.successHandler = successHandler;
-            this.errorHandler = errorHandler;
-
+            this.successHandler = successHandler;  // 请求与响应的正确处理
+            !status ? this.errorHandler = errorHandler : null; // 响应错误处理
         }
-        this[status ? '_lock' : 'lock'] = () => {
-            if (!resolve) {
-                this.interceptors.p = new Promise((resolve, reject) => {
-                    _resolve = resolve;
-                    _reject = reject;
-                })
+        if (status) {
+            this.lock =  (url)=>{
+                if (!resolve) {
+                    this.p = new Promise((_resolve, _reject) => {
+                        resolve = _resolve;
+                        reject = _reject;
+                    })
+                }
+            }
+            this.unlock = (url)=>{
+                if(resolve){
+                    resolve();
+                    this.clear()
+                }
+            }
+            this.cancel = (url)=>{
+                if (reject) {
+                    reject("cancel");
+                    _clear();
+                }
+            }
+            this.clear = (url)=>{
+                if (reject) {
+                    reject("cancel");
+                    _clear();
+                }
             }
         }
-        this[status ? '_unlock' : 'unlock'] = () => {
-            if (resolve) {
-                _resolve()
-                this[status ? '_clear' : 'clear']();
-            }
-        }
-        this[status ? '_clear' : 'clear'] = () => {
-            if (reject) {
-                reject("cancel");
-                _clear();
-            }
-            interceptor.p = resolve = reject = null;
-            reject("cancel");
-            _clear();
-        }
-
     }
 }

@@ -2,6 +2,7 @@ import Handler from './core/handler.js'
 import EngineAdapter from './core/engineAdapter.js'
 import makeRequest from './core/makeRequest.js'
 import utils from './utils/index.js';
+import initConfig from './core/initConfig'
 class Mole {
   constructor(engine) {
     this.config = new initConfig();

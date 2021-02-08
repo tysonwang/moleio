@@ -11,12 +11,12 @@ class Mole {
     this.create = (engine) => {
       return new Mole(engine);
     }
-    
-["get", "post", "put", "patch", "head", "delete"].forEach(e => {
-  Mole.prototype[e] = function (url, data, option) {
-      return this.request(url, data, utils.merge({method: e}, option))
-  }
-});
+
+    ["get", "post", "put", "patch", "head", "delete"].forEach(e => {
+      Mole.prototype[e] = function (url, data, option) {
+        return this.request(url, data, utils.merge({ method: e }, option))
+      }
+    });
   }
   request(url, data, options) {
     return new makeRequest(url, data, options, this);

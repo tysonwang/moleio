@@ -4,23 +4,18 @@ export default class initConfig {
         url: '',
         method: 'GET',
         baseURL: '',
-  
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         params: {},
-        paramsSerializer: function (params) {
-          return qs.stringify(params, { arrayFormat: 'brackets' })
-        },
         data: {},
         timeout: 1000,
-        withCredentials: false, // 默认的
-        responseType: 'json', // 默认的
-        parseJson: true,
-        onUploadProgress: function (progressEvent) {
-        },
-        onDownloadProgress: function (progressEvent) {
-        },
+        withCredentials: false, 
+        responseType: 'json', 
+        // onUploadProgress: function (progressEvent) {
+        // },
+        // onDownloadProgress: function (progressEvent) {
+        // },
         maxContentLength: 2000,
       }
     }

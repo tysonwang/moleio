@@ -29,10 +29,10 @@ conf = {
                return []
         }
 }
-mole.abort()
 mole.race()
 mole.all()
 mole.spread()
+mole.settled() 
 ...
 // 创建实例的两种方式
 const mole = new mole(engine); // 创建新的实例 默认不传入参数为浏览器端使用，传入 node,wx,my,taro ...可更换请求环境
@@ -58,6 +58,11 @@ response:
         status,
         config
 }
+
+```
+
+```js
+该库核心使用了promise.then 的数据穿透与延迟触发resolve  reject 
 
 ```
 

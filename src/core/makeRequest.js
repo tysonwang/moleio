@@ -1,7 +1,7 @@
-function makeRequest(url, data, options, instance) {
+function makeRequest(url, data, options) {
     return new Promise((resolve, reject) => {
-      ifLock(interceptors.request.p, () => {
-        const { engine, interceptors, config } = instance;
+      ifLock(this.interceptors.request.p, () => {
+        const { engine, interceptors, config } = this;
         options.engine = engine;
         realOptions = normalizeOptions(url, data, options, config);
         interceptors.request.successHandler
@@ -23,3 +23,5 @@ function makeRequest(url, data, options, instance) {
       })
     })
   }
+
+  export default makeRequest;

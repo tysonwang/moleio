@@ -13,7 +13,7 @@ class Mole {
       return new Mole(engine);
     }
     this.request = (url, data, options)=> {
-      return new makeRequest(url, data, options, this);
+      return new makeRequest.call(this,url, data, options);
     }
 
     ["get", "post", "put", "patch", "head", "delete"].forEach(e => {

@@ -10,8 +10,6 @@ class Mole {
       request: new InterceptorManager(),
       response: new InterceptorManager()
     }
-    // this.interceptors.request = new Handler(true);
-    // this.interceptors.response = new Handler(false);
     this.engine = new Engine(engine);
     this.create = (engine) => {
       return new Mole(engine);

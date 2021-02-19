@@ -17,7 +17,8 @@ class Mole {
     this.request = (url, data, options) => {
       return new dispatchRequest.call(this, url, data, options);
     }
-
+    this.request.use = this.interceptors.request.use
+    this.response.use = this.interceptors.request.use
     ["get", "post", "put", "patch", "head", "delete"].forEach(method => {
       Mole.prototype[method] = function (url, data, option) {
         return this.request(url, data, utils.merge({ method }, option))

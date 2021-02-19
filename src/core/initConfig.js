@@ -12,11 +12,8 @@ export default class initConfig {
         timeout: 1000,
         withCredentials: false, 
         responseType: 'json', 
-        // onUploadProgress: function (progressEvent) {
-        // },
-        // onDownloadProgress: function (progressEvent) {
-        // },
         maxContentLength: 2000,
+        
       }
     }
   }

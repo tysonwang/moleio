@@ -1,4 +1,4 @@
-function emitEngine(options, interceptors, resolve, reject) {
+function emitEngine(option) {
     const contentType = 'application/x-www-form-urlencoded';
     const { data, engine, baseURL, params } = options;
     const originData = Object.assign({}, data);
@@ -36,7 +36,7 @@ function emitEngine(options, interceptors, resolve, reject) {
         }
         settle(interceptors.response.successHandler, data, resolve)
       } else {
-        settle(interceptors.response.errorHandler, data, reject)
+        reject(interceptors.response.errorHandler, data, reject)
       }
     }
     if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
@@ -54,12 +54,12 @@ function emitEngine(options, interceptors, resolve, reject) {
     }
     engine.send(query ? null : data);
     engine.onerror = () => {
-      settle(interceptors.response.errorHandler, {},reject)
+      reject(interceptors.response.errorHandler, {},reject)
     }
     engine.ontimeout = () => {
-      settle(interceptors.response.errorHandler, {},reject)
+      reject(interceptors.response.errorHandler, {},reject)
     }
     engine.onabort = () => {
-      settle(interceptors.response.errorHandler, {},reject)
+      reject(interceptors.response.errorHandler, {},reject)
     }
   }

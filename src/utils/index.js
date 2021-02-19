@@ -104,8 +104,9 @@ const utils = {
         _encode(data, "");
         return str;
     },
-    lockQueue(promise, callback, isCancel) {
-        if (promise) {
+    queueIfLock(status, callback) {
+        if (status) {
+            let promise = Promise.resolve(status)
             promise.then(() => { callback() });
         } else {
             callback()

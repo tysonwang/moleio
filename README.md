@@ -4,8 +4,8 @@ Promise based HTTP client for the browser ,wx,my,and node.js
 
 ## 功能描述
 
-类似于 axios 库，提供除浏览器端 ajax 请求外，该库提供了 node 端,微信小程序，uniapp,taro,支付宝小程序的支持，尤其是在文件上传上方面提供了丰富的配置，支持上传 base64,file,blob,buffer 等的支持,并提供进度与分片上传支持
-
+类似于 axios 库，提供除浏览器端 ajax 请求外，该库提供了 node 端,微信小程序，uniapp,taro,支付宝小程序的支持，尤其是在文件上传上方面提供了丰富的配置，支持上传 base64,file,blob,buffer 等的支持,并提供进度与分片上传支持  
+提供可配置化的加锁解锁与取消机制
 ## 使用方式
 
 ```js

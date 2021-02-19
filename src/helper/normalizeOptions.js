@@ -1,6 +1,5 @@
 import normalizeHeaderName from './normalizeHeaderName.js'
-function normalizeOptions(url, data, options, config) {
-    utils.merge(options, Object.assign({}, config)); //合并options
+function normalizeOptions(url, data, options) {
     options.data = data || {}
     options.method = options.method.toUpperCase();
     if (url instanceof Object) {

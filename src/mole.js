@@ -10,13 +10,13 @@ class Mole {
       request: new InterceptorManager(),
       response: new InterceptorManager()
     }
-    // this.interceptors.request = new Handler(true);
-    // this.interceptors.response = new Handler(false);
     this.engine = new Engine(engine);
     this.create = (engine) => {
       return new Mole(engine);
     }
     this.request = (url, data, options) => {
+      options.engine = this.engine;
+      utils.merge(options, this.config);
       return new dispatchRequest.call(this, url, data, options);
     }
 

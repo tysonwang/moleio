@@ -1,5 +1,5 @@
 function dispatchRequest(url, data, options) {
-  realOptions = normalizeOptions(url, data, options, this.config);
+  realOptions = normalizeOptions(url, data, options);
   options = Promise.resolve(realOptions);
   options.then(
     (opt)=>{
@@ -7,7 +7,7 @@ function dispatchRequest(url, data, options) {
         let lockStatus = this.interceptors.request.lockList.includes(opt.url);
         queueIfLock(lockStatus&&this.interceptors.request.p,()=>{
           this.interceptors.request.cancelList.includes(opt.url)&&rej(opt);
-          res(this.interceptors.request['successHandler'](opt,config)||opt);
+          res(this.interceptors.request['successHandler'](opt)||opt);
         })
       })
     },null).then(emitEngine,null).then((result)=>{
@@ -20,32 +20,4 @@ function dispatchRequest(url, data, options) {
       })
     },this.interceptors.response['errorHandler'])
   }
-// 测试 demo
-//  let _res,_rej;
-// let config= Promise.resolve(123);
-// let lock = Promise.resolve(234324)
-// let s = config.then(function(res){
-//  return new Promise((resolve,reject)=>{
-//     ifLock(lock,function(){
-//   return resolve(123);
-//   })
-//   })
-// },function(res){
-//   return res;
-// }).then(function(res){
-//   console.log('res',res)
-//   return res
-// },function(res){
-//   console.log('res',res)
-// })
-// function ifLock(p,fn){
-//   if(p){
-//     p.then(()=>{
-//       fn()
-//     })
-//   }else{
-//     fn()
-//   }
-// }
-
   export default dispatchRequest;

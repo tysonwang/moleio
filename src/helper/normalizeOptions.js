@@ -15,3 +15,5 @@ function normalizeOptions(url, data, options) {
     }
     return options;
   }
+
+  export default normalizeOptions;

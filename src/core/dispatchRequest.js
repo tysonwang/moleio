@@ -1,3 +1,5 @@
+import normalizeOptions from '../helper/normalizeOptions.js';
+
 function dispatchRequest(url, data, options) {
   console.log(url)
   console.log(this)

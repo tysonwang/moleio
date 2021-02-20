@@ -11,16 +11,13 @@ class Mole {
       response: new InterceptorManager()
     }
     this.engine = new Engine(engine);
+    console.log(this.engine)
     this.create = (engine) => {
       return new Mole(engine);
     }
     this.request = (url, data, options) => {
-      options.engine = this.engine;
-      utils.merge(options, this.config);
-      return new dispatchRequest.call(this, url, data, options);
+      return dispatchRequest.call(this, url, data, options);
     }
-    this.request.use = this.interceptors.request.use
-    this.response.use = this.interceptors.request.use
     ["get", "post", "put", "patch", "head", "delete"].forEach(method => {
       Mole.prototype[method] = function (url, data, option) {
         return this.request(url, data, utils.merge({ method }, option))

@@ -4,13 +4,9 @@ export default class Adapter {
     }
     open= ()=>{}
     onreadystatechange = ()=>{
-
     }
     ontimeout = ()=>{
-
     }
     onabort = ()=>{
-
     }
-
 }

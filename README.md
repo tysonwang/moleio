@@ -11,8 +11,8 @@ Promise based HTTP client for the browser ,wx,my,and node.js
 ```js
 const mole = require('moleio');
 mole.uploadConfig((config)=>{return config})  // 上传的配置
-mole.request.use(()=>{}) // 请求的配置
-mole.response.use((success)=>{},(err)=>{}) // 响应的配置
+mole.interceptors.request.use(()=>{}) // 请求的配置
+mole.interceptors.response.use((success)=>{},(err)=>{}) // 响应的配置
 // 使用默认实例
 mole.request(url,[data,options]);
 mole.get({url,data,options});

@@ -1,5 +1,10 @@
 function dispatchRequest(url, data, options) {
+  console.log(url)
+  console.log(this)
+  console.log(data)
   realOptions = normalizeOptions(url, data, options);
+  realOptions.engine = this.engine;
+  utils.merge(options, this.config);
   options = Promise.resolve(realOptions);
   options.then(
     (opt)=>{

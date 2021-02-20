@@ -123,7 +123,7 @@ const utils = {
         return a;
     },
     buildUrl(options){
-        options.url.
+        return options.url
     }
 }
 export default utils;

@@ -7,11 +7,18 @@ const targetPath = env?path.resolve(__dirname,'demo') :path.resolve(__dirname,'d
 const output = {
         filename: "[name].js",
         path: targetPath,
-        library: 'manis',
-        libraryTarget: 'umd'
+        library: 'mole',
+        libraryTarget: 'umd',
+        libraryExport: 'default', 
+        // library: 'mole',
+        // libraryTarget: 'umd'
+        // path: __dirname + '/dist/',
+        sourceMapFilename: '[name].map',
+        // library: 'axios',
+        // libraryTarget: 'umd'
     }
 const entry = {
-        manis: './src/manis.js'  // 用于浏览器端
+        mole: './src/mole.js'  // 用于浏览器端
 }
 const devtool = env ? false:'inline-source-map';
 const mode = env ?'development':'production';
@@ -94,10 +101,11 @@ module.exports = {
                     "useBuiltIns": "usage",//只转化使用的api
                     "corejs": 2 //@babel/pollyfill 封装高版本的api
                 }]],
+                plugins: [require('@babel/plugin-proposal-class-properties')]
                 
               }
             }
           }
         ]
-    }
+    },
 }

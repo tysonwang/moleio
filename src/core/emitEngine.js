@@ -1,25 +1,23 @@
+import qs from 'qs';
+import utils from '../utils';
 function emitEngine(options) {
+  console.log('asdf',options)
   return new Promise((res, rej) => {
-
-    const { data, engine, baseURL, params } = options;
-    const originData = Object.assign({}, data);
-    const baseUrl = baseURL || '';
-    let url = buildUrl(options);
-    const query = ["GET", "HEAD", "DELETE", "OPTION"].includes(options.method)
-    data = utils.isObject(data) || {};
-    params = utils.isObject(params) || {};
-    data = Object.assign({}, data, params);
-    let stringData = qs.stringify(data, { arrayFormat: 'brackets' })
+    let { data, engine, params,realUrl,url,baseURL} = options;
+    let query = ["GET", "HEAD", "DELETE", "OPTION"].includes(options.method)
+    let newData = Object.assign({},data);
+    utils.merge(newData,params);
+    let stringData = qs.stringify(newData, { arrayFormat: 'brackets' })
     if (query) {
-      url += url.includes('?') ? '?' : '&' + stringData;
+      realUrl += realUrl.includes('?') ?  '?' : '&' + stringData;
     }
     engine.timeout = options.timeout;
     engine.withCredentials = options.withCredentials;
-    engine.open(options.method, url, true);
+    console.log(engine.open)
+    engine.open(options.method, realUrl, true);
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
-      // xmlHttp.responseText
-      type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
+      // type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
       let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
       let headers = {};
       let items = (engine.getAllResponseHeaders() || "").split("\r\n");
@@ -30,7 +28,7 @@ function emitEngine(options) {
         headers[key] = engine.getResponseHeader(key)
       })
 
-      let data = {
+      let body = {
         data: responseData,
         headers,
         options,
@@ -42,32 +40,33 @@ function emitEngine(options) {
         if (response.getResponseHeader('Content-Type').includes('json')) {
           responseData = JSON.parse(responseData);
         }
-        res(data)
+        res(body)
       } else {
-        data.msg = data.statusText
-        delete data.data;
-        delete data.statusText;
-        rej(data);
+        body.msg = body.statusText
+        delete body.data;
+        delete body.statusText;
+        rej(body);
       }
     }
+    let realData;
     if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
-      data = stringData;
+      realData = stringData;
     }
-    if (!(originData instanceof FormData) && isObject(originData)) {
+    if (!(data instanceof FormData) && utils.isObject(data)) {
       options.headers['Content-Type'] = 'application/json;charset=utf-8';
-      data = JSON.stringify(originData)
+      realData = JSON.stringify(data)
     }
     for (let key in options.headers) {
-      if (key === 'Content-Type' && originData instanceof FormData) {
+      if (key === 'Content-Type' && data instanceof FormData) {
         delete options.headers[key];
       }
       engine.setRequestHeader(key, options.headers[key])
     }
-    engine.send(query ? null : data);
-    engine.onerror = () => {
+    engine.send(query ? null : realData);
+    engine.onerror = (e) => {
       rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
     }
-    engine.ontimeout = () => {
+    engine.ontimeout = (e) => {
       rej({data:{},msg:`timeout ${engine.timeout}ms`,engine,options,status:engine.status})
     }
   //     // 貌似用不上这个了
@@ -80,3 +79,5 @@ function emitEngine(options) {
   //   }
   })
 }
+
+export default emitEngine;

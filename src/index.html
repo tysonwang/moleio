@@ -9,7 +9,11 @@
 </body>
 <script>
  
-mole.request('/asdf',{name:'asdfasdf'})
+mole.request('/asdf',{name:'asdfasdf'}).then(res=>{
+    console.log('>>>>',res);
+},(res)=>{
+    console.log('<><>',res);
+})
 
 </script>
 </html>

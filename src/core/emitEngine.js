@@ -41,10 +41,11 @@ function emitEngine(options) {
           responseData = JSON.parse(responseData);
         }
         res(body)
-      } else {
+      } else if(engine.readyState == 4) {
         body.msg = body.statusText
         delete body.data;
         delete body.statusText;
+        console.log('helo',body)
         rej(body);
       }
     }
@@ -64,6 +65,8 @@ function emitEngine(options) {
     }
     engine.send(query ? null : realData);
     engine.onerror = (e) => {
+      console.log('e>>>>>>>>>>>>>>>>>>>')
+      console.log(e);
       rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
     }
     engine.ontimeout = (e) => {

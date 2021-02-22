@@ -25,8 +25,8 @@ conf = {
         ignore:(url)=>{
                 return boolean
         },
-        match:()=>{
-               return []
+        match:(url)=>{
+               return [url]
         }
 }
 mole.race()

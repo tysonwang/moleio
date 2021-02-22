@@ -1,7 +1,7 @@
 import qs from 'qs';
 import utils from '../utils';
 function emitEngine(options) {
-  console.log('asdf',options)
+  
   return new Promise((res, rej) => {
     let { data, engine, params,realUrl,url,baseURL} = options;
     let query = ["GET", "HEAD", "DELETE", "OPTION"].includes(options.method)
@@ -9,16 +9,21 @@ function emitEngine(options) {
     utils.merge(newData,params);
     let stringData = qs.stringify(newData, { arrayFormat: 'brackets' })
     if (query) {
-      realUrl += realUrl.includes('?') ?  '?' : '&' + stringData;
+      realUrl += (realUrl.includes('?') ? '&': '?' )  + stringData;
     }
     engine.timeout = options.timeout;
     engine.withCredentials = options.withCredentials;
     console.log(engine.open)
+    console.log('realURL',realUrl)
     engine.open(options.method, realUrl, true);
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
+      if (!engine || engine.readyState !== 4) {
+        return;
+      }
       // type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
       let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
+      console.log('responseData',engine.readyState)
       let headers = {};
       let items = (engine.getAllResponseHeaders() || "").split("\r\n");
       items.pop();
@@ -36,16 +41,20 @@ function emitEngine(options) {
         engine: engine,
         statusText: engine.statusText
       };
+      console.log('re',engine.readyState)
       if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
-        if (response.getResponseHeader('Content-Type').includes('json')) {
+        if (engine.getResponseHeader('Content-Type').includes('json')&&!utils.isPlainObject(responseData)) {
+          console.log('s',typeof responseData)
           responseData = JSON.parse(responseData);
         }
+        console.log('s',typeof responseData)
+
         res(body)
-      } else if(engine.readyState == 4) {
-        body.msg = body.statusText
-        delete body.data;
-        delete body.statusText;
-        console.log('helo',body)
+      } else {
+
+        console.log('c',engine.status);
+
+        console.log(body);
         rej(body);
       }
     }

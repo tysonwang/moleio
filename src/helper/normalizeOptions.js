@@ -1,4 +1,3 @@
-import normalizeHeaderName from './normalizeHeaderName.js'
 import utils from '../utils/index.js'
 function normalizeOptions(url, data = {}, options = {}, that) {
   if (utils.isPlainObject(url)) {
@@ -35,7 +34,6 @@ function normalizeOptions(url, data = {}, options = {}, that) {
   }
   // header的处理
   options.headers = options.headers || {};
-  normalizeHeaderName(options.headers, 'Content-Type');
   let type = 'Content-Type';
   for (let key in options.headers) {
     if (options.headers.hasOwnProperty(key)) {

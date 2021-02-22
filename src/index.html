@@ -4,16 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 </head>
 <body>
 </body>
 <script>
  
-mole.request('/asdf',{name:'asdfasdf'}).then(res=>{
-    console.log('>>>>',res);
-},(res)=>{
-    console.log('<><>',res);
+ mole.request('https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',{name:'asdfasdf'},{method:'post'}).then(s=>{
+    console.log('s',s)
+},m=>{
+    console.log('m',m)
 })
-
+axios({
+  method:'post',
+  url:'https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',
+  data:{name:'ww'}
+}).then(res=>{
+    console.log('r',res)
+})
 </script>
 </html>
+<!-- 
+ccept: application/json, text/plain, */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
+Connection: keep-alive
+Content-Length: 13
+Content-Type: application/json;charset=UTF-8
+Host: www.fastmock.site
+Origin: http://localhost:8080
+Referer: http://localhost:8080/
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: cross-site -->

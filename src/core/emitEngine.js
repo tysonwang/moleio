@@ -1,7 +1,7 @@
 import qs from 'qs';
 import utils from '../utils';
 function emitEngine(options) {
-  console.log('asdf',options)
+  
   return new Promise((res, rej) => {
     let { data, engine, params,realUrl,url,baseURL} = options;
     let query = ["GET", "HEAD", "DELETE", "OPTION"].includes(options.method)
@@ -9,24 +9,38 @@ function emitEngine(options) {
     utils.merge(newData,params);
     let stringData = qs.stringify(newData, { arrayFormat: 'brackets' })
     if (query) {
-      realUrl += realUrl.includes('?') ? '&':'?' + stringData;
+      realUrl += (realUrl.includes('?') ? '&': '?' )  + stringData;
     }
-    engine.timeout = options.timeout;
-    engine.withCredentials = options.withCredentials;
+    try {
+      engine.withCredentials = !!options.withCredentials;
+      engine.timeout = options.timeout;
+      
+    } catch (error) {
+      
+    }
     console.log(engine.open)
-    engine.open(options.method, realUrl, true);
+    console.log('realURL',realUrl)
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
+      if (!engine || engine.readyState !== 4) {
+        return;
+      }
       // type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
       let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
+      console.log('responseData',engine.readyState)
       let headers = {};
-      let items = (engine.getAllResponseHeaders() || "").split("\r\n");
+      try {
+        let items = (engine.getAllResponseHeaders() || "").split("\r\n");
       items.pop();
       items.forEach((e) => {
         if (!e) return;
         let key = e.split(":")[0]
         headers[key] = engine.getResponseHeader(key)
       })
+      } catch (error) {
+        
+      }
+      
 
       let body = {
         data: responseData,
@@ -36,20 +50,29 @@ function emitEngine(options) {
         engine: engine,
         statusText: engine.statusText
       };
-
       if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
-        if (response.getResponseHeader('Content-Type').includes('json')) {
+        
+        if (engine.getResponseHeader('Content-Type').includes('json')&&!utils.isPlainObject(responseData)) {
+          console.log('s',typeof responseData)
           responseData = JSON.parse(responseData);
         }
+        console.log('s',typeof responseData)
+
         res(body)
-      } else  {
+      } else if(engine.status===0){
+        console.log('asdf')
+       return;
+      } else{
+        console.log('error')
         body.msg = body.statusText
         delete body.data;
         delete body.statusText;
         console.log('helo',body)
+
         rej(body);
       }
     }
+
     let realData;
     if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
       realData = stringData;
@@ -58,6 +81,8 @@ function emitEngine(options) {
       options.headers['Content-Type'] = 'application/json;charset=utf-8';
       realData = JSON.stringify(data)
     }
+    engine.open(options.method, realUrl, true);
+
     for (let key in options.headers) {
       if (key === 'Content-Type' && data instanceof FormData) {
         delete options.headers[key];
@@ -71,6 +96,7 @@ function emitEngine(options) {
       rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
     }
     engine.ontimeout = (e) => {
+      console.log('e>>>>>>>>>>>',engine.timeout);
       rej({data:{},msg:`timeout ${engine.timeout}ms`,engine,options,status:engine.status})
     }
   //     // 貌似用不上这个了

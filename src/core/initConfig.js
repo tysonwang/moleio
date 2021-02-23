@@ -9,7 +9,7 @@ export default class initConfig {
         },
         params: {},
         data: {},
-        timeout: 1000,
+        timeout:1000,
         withCredentials: false, 
         responseType: 'json', //[arrayBuffer,blob,json,document,text,'']
         maxContentLength: 2000,

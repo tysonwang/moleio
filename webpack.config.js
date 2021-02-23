@@ -9,7 +9,7 @@ const output = {
         path: targetPath,
         library: 'mole',
         libraryTarget: 'umd',
-        libraryExport: 'default', 
+        // libraryExport: 'default', 
         // library: 'mole',
         // libraryTarget: 'umd'
         // path: __dirname + '/dist/',

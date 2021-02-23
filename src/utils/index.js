@@ -125,8 +125,5 @@ const utils = {
         }
         return a;
     },
-    buildUrl(options){
-        return options.url
-    }
 }
 export default utils;

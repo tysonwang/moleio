@@ -11,7 +11,6 @@ class Mole {
       response: new InterceptorManager()
     }
     this.engine = new Engine(engine);
-    console.log(this.engine)
     this.create = (engine) => {
       return new Mole(engine);
     }

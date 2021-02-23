@@ -18,8 +18,6 @@ function emitEngine(options) {
     } catch (error) {
       
     }
-    console.log(engine.open)
-    console.log('realURL',realUrl)
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
       if (!engine || engine.readyState !== 4) {
@@ -27,7 +25,6 @@ function emitEngine(options) {
       }
       // type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
       let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
-      console.log('responseData',engine.readyState)
       let headers = {};
       try {
         let items = (engine.getAllResponseHeaders() || "").split("\r\n");
@@ -40,8 +37,6 @@ function emitEngine(options) {
       } catch (error) {
         
       }
-      
-
       let body = {
         data: responseData,
         headers,
@@ -53,21 +48,15 @@ function emitEngine(options) {
       if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
         
         if (engine.getResponseHeader('Content-Type').includes('json')&&!utils.isPlainObject(responseData)) {
-          console.log('s',typeof responseData)
           responseData = JSON.parse(responseData);
         }
-        console.log('s',typeof responseData)
-
         res(body)
-      } else if(engine.status===0){
-        console.log('asdf')
-       return;
+      } else if(engine.status===0&&(!responseData)){  // 此处需要加强一下
+        return;
       } else{
-        console.log('error')
         body.msg = body.statusText
         delete body.data;
         delete body.statusText;
-        console.log('helo',body)
 
         rej(body);
       }
@@ -91,12 +80,9 @@ function emitEngine(options) {
     }
     engine.send(query ? null : realData);
     engine.onerror = (e) => {
-      console.log('e>>>>>>>>>>>>>>>>>>>')
-      console.log(e);
       rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
     }
     engine.ontimeout = (e) => {
-      console.log('e>>>>>>>>>>>',engine.timeout);
       rej({data:{},msg:`timeout ${engine.timeout}ms`,engine,options,status:engine.status})
     }
   //     // 貌似用不上这个了

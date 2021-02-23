@@ -10,8 +10,9 @@
 <!-- <a href="http://www.baidu.com" id='link' ></a> -->
 <script>
  
-//    console.log(mole)
-mole.request('/asdf',{name:'asdfasdf'});
+mole.request('/asdf',{name:'asdfasdf'}).then((res)=>{console.log(res)}).catch(err=>{
+    console.log('err>>>>',err)
+})
 
 </script>
 </html>

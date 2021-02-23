@@ -1,10 +1,13 @@
+
 const utils = {
+    toString(ob){
+        return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase();
+    },
     isObject(val) {
         return val && typeof val === 'object';
     },
     isPlainObject(obj) {
-        let prototype = Object.getPrototypeOf(obj);
-        return this.type(obj) === 'object' && (prototype === null || prototype == Object.getPrototypeOf({}))
+        return this.toString(obj)==='object';
     },
     deepCopy(source) {
         if (typeof source != "object") {
@@ -106,7 +109,7 @@ const utils = {
     },
     queueIfLock(status, callback) {
         if (status) {
-            let promise = Promise.resolve(status)
+           
             promise.then(() => { callback() });
         } else {
             callback()
@@ -116,7 +119,7 @@ const utils = {
         for (let key in b) {
             if (!a.hasOwnProperty(key)) {
                 a[key] = b[key];
-            } else if (this.isObject(b[key], 1) && this.isObject(a[key], 1)) {
+            } else if (this.isPlainObject(b[key]) && this.isPlainObject(a[key])) {
                 this.merge(a[key], b[key])
             }
         }

@@ -11,9 +11,9 @@ export default class initConfig {
         data: {},
         timeout: 1000,
         withCredentials: false, 
-        responseType: 'json', 
+        responseType: 'json', //[arrayBuffer,blob,json,document,text,'']
         maxContentLength: 2000,
-        
+        headerStrong:false
       }
     }
   }

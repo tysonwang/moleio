@@ -11,7 +11,6 @@ function dispatchRequest(url, data, options) {
   console.log('options',options)
   return options.then(
     (opt)=>{
-      console.log('opt',opt)
       return new Promise((res,rej)=>{
         let lockStatus = rq.lockList.includes(opt.url);
         utils.queueIfLock(lockStatus&&rq.p,()=>{

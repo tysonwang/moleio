@@ -47,14 +47,8 @@ function emitEngine(options) {
           console.log('s',typeof responseData)
           responseData = JSON.parse(responseData);
         }
-        console.log('s',typeof responseData)
-
         res(body)
       } else {
-
-        console.log('c',engine.status);
-
-        console.log(body);
         rej(body);
       }
     }
@@ -70,12 +64,15 @@ function emitEngine(options) {
       if (key === 'Content-Type' && data instanceof FormData) {
         delete options.headers[key];
       }
-      engine.setRequestHeader(key, options.headers[key])
+      try {
+        engine.setRequestHeader(key, options.headers[key])
+      } catch (error) {
+      }
     }
-    engine.send(query ? null : realData);
+    console.log(realData)
+    console.log(typeof realData)
+    engine.send(realData);
     engine.onerror = (e) => {
-      console.log('e>>>>>>>>>>>>>>>>>>>')
-      console.log(e);
       rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
     }
     engine.ontimeout = (e) => {

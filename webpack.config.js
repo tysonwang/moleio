@@ -2,20 +2,18 @@ const path = require('path')
 const HtmlWebackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const env = process.env.NODE_ENV==='dev';
+const webpack = require('webpack')
 const targetPath = env?path.resolve(__dirname,'demo') :path.resolve(__dirname,'dist');
 const output = {
         filename: "[name].js",
         path: targetPath,
+        // libraryExport: 'default', 
         library: 'mole',
-        libraryTarget: 'umd',
-        libraryExport: 'default', 
-        // library: 'mole',
-        // libraryTarget: 'umd'
+        libraryTarget: 'umd' || 'global',
         // path: __dirname + '/dist/',
         sourceMapFilename: '[name].map',
-        // library: 'axios',
-        // libraryTarget: 'umd'
     }
 const entry = {
         mole: './src/mole.js'  // 用于浏览器端
@@ -29,7 +27,14 @@ const extend = {
     node:'',    //node
     my:''       //阿里小程序
 }
-const plugins =env ? [new HtmlWebackPlugin({ template: './src/index.html' })]:[new CleanWebpackPlugin(['dist']),new HtmlWebackPlugin({ template: './src/index.html' })];
+const plugins =env ? [
+    new HtmlWebackPlugin({ template: './src/index.html' })]:
+    [new CleanWebpackPlugin(['dist']),
+    new HtmlWebackPlugin({ template: './src/index.html' }),
+new webpack.ProvidePlugins({
+    $:'jquery'
+})
+ ];
 module.exports = {
     devtool,
     mode: process.env.NODE_ENV==='dev'?'development':'production',
@@ -37,6 +42,7 @@ module.exports = {
         contentBase:path.resolve(__dirname,'demo'), 
         open:true
     },
+    externals:['lodash'], // 打包中忽略这个库
     entry,
     output,
     plugins,

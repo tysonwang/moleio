@@ -11,11 +11,13 @@ function emitEngine(options) {
     if (query) {
       realUrl += (realUrl.includes('?') ? '&': '?' )  + stringData;
     }
-    engine.timeout = options.timeout;
-    engine.withCredentials = options.withCredentials;
-    console.log(engine.open)
-    console.log('realURL',realUrl)
-    engine.open(options.method, realUrl, true);
+    try {
+      engine.withCredentials = !!options.withCredentials;
+      engine.timeout = options.timeout;
+      
+    } catch (error) {
+      
+    }
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
       if (!engine || engine.readyState !== 4) {
@@ -23,16 +25,18 @@ function emitEngine(options) {
       }
       // type = ['document', 'json', 'text', 'ms-stream', 'array-buffer']
       let responseData = !options.responseType || options.responseType === 'text' ? request.responseText : engine.response
-      console.log('responseData',engine.readyState)
       let headers = {};
-      let items = (engine.getAllResponseHeaders() || "").split("\r\n");
+      try {
+        let items = (engine.getAllResponseHeaders() || "").split("\r\n");
       items.pop();
       items.forEach((e) => {
         if (!e) return;
         let key = e.split(":")[0]
         headers[key] = engine.getResponseHeader(key)
       })
-
+      } catch (error) {
+        
+      }
       let body = {
         data: responseData,
         headers,
@@ -41,10 +45,9 @@ function emitEngine(options) {
         engine: engine,
         statusText: engine.statusText
       };
-      console.log('re',engine.readyState)
       if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
+        
         if (engine.getResponseHeader('Content-Type').includes('json')&&!utils.isPlainObject(responseData)) {
-          console.log('s',typeof responseData)
           responseData = JSON.parse(responseData);
         }
         res(body)
@@ -52,6 +55,7 @@ function emitEngine(options) {
         rej(body);
       }
     }
+
     let realData;
     if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
       realData = stringData;
@@ -60,6 +64,8 @@ function emitEngine(options) {
       options.headers['Content-Type'] = 'application/json;charset=utf-8';
       realData = JSON.stringify(data)
     }
+    engine.open(options.method, realUrl, true);
+
     for (let key in options.headers) {
       if (key === 'Content-Type' && data instanceof FormData) {
         delete options.headers[key];

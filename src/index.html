@@ -5,24 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <script src="http://cdn-coolcollege.oss-cn-hangzhou.aliyuncs.com/kuxueyuan-zhiyuan/test4/fly.js"></script> -->
 
 </head>
 <body>
 </body>
+<!-- <a href="http://www.baidu.com" id='link' ></a> -->
 <script>
- 
+//  console.log('fly',fly)
+//  fly.request({
+//      url:'https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',
+//      data:{name:'s'},
+//      method:'post',
+//      timeout:1000,
+//  }).then(res=>{
+//      console.log('res',res)
+//  });
  mole.request('https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',{name:'asdfasdf'},{method:'post'}).then(s=>{
     console.log('s',s)
 },m=>{
     console.log('m',m)
 })
-axios({
-  method:'post',
-  url:'https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',
-  data:{name:'ww'}
-}).then(res=>{
-    console.log('r',res)
-})
+// axios({
+//   method:'post',
+//   url:'https://www.fastmock.site/mock/cb865cbe22538c4e6d9d9543aa7f2900/vueadmin/production/login',
+//   data:{name:'ww'},
+//   timeout:1000
+// }).catch(e=>{
+
+//     console.log('e>>>>>>>>>>>>',e)
+// })
 </script>
 </html>
 <!-- 

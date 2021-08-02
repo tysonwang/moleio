@@ -10,17 +10,30 @@ Promise based HTTP client for the browser ,wx,my,and node.js
 
 ```js
 const mole = require('moleio');
+
 mole.uploadConfig((config)=>{return config})  // 上传的配置
+
+
 mole.interceptors.request.use(()=>{}) // 请求的配置
 mole.interceptors.response.use((success)=>{},(err)=>{}) // 响应的配置
 // 使用默认实例
-mole.request(url,[data,options]);
+mole.request(url,[data,[options]]);
+
+mole.request('asdfasdf',{asdf:asdfas})
+
+
 mole.get({url,data,options});
 mole.post({url,data,options});
 mole.put({url,data,options});
+
+
+mole.request(abidu,con)
+
+
 mole.cancel(url|| conf)   // 根据条件取消请求
 mole.lock(url|| conf)   // 根据条件锁定请求
 mole.unlock(url|| conf)   // 根据条件解锁请求
+
 conf = {
         ignore:(url)=>{
                 return true||false
@@ -34,6 +47,7 @@ mole.race()
 mole.all()
 mole.spread()
 mole.settled() 
+
 ...
 // 创建实例的两种方式
 /** 如需引入其他环境的需安装并引入响应的引擎
@@ -48,9 +62,7 @@ const feishu = new mole('fs');
 /*
 const mole = new mole(engine); // 创建新的实例 默认不传入参数为浏览器端使用，传入 node,wx,my,taro ...可更换请求环境
 const mole = mole.create(engine); // 创建新的实例对象 默认不传入参数为浏览器端使用，传入 node,wx,my,taro ...可更换请求环境
-
 ```
-
 ## 返回值类型
 
 ```js

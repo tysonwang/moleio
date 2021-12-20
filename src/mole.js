@@ -27,13 +27,19 @@ class Mole {
         this.interceptors.request[func](config);
       }
     })
+    this.stop = () => {
+      this.config.stopStatus = true
+    }
+    this.start = () => {
+      this.config.stopStatus = false
+    }
     this.all = (promises) => {
       return Promise.all(promises)
     }
     this.race = (promises) => {
       return Promise.race(promises)
     }
-    this.settled =(promises)=>{
+    this.settled = (promises) => {
       return Promise.allSettled(promises)
     }
     this.spread = (callback) => {

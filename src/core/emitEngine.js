@@ -1,22 +1,22 @@
 import qs from 'qs';
 import utils from '../utils';
 function emitEngine(options) {
-  
+
   return new Promise((res, rej) => {
-    let { data, engine, params,realUrl,url,baseURL} = options;
+    let { data, engine, params, realUrl, url, baseURL } = options;
     let query = ["GET", "HEAD", "DELETE", "OPTION"].includes(options.method)
-    let newData = Object.assign({},data);
-    utils.merge(newData,params);
+    let newData = Object.assign({}, data);
+    utils.merge(newData, params);
     let stringData = qs.stringify(newData, { arrayFormat: 'brackets' })
     if (query) {
-      realUrl += (realUrl.includes('?') ? '&': '?' )  + stringData;
+      realUrl += (realUrl.includes('?') ? '&' : '?') + stringData;
     }
     try {
       engine.withCredentials = !!options.withCredentials;
       engine.timeout = options.timeout;
-      
+
     } catch (error) {
-      
+
     }
     engine.responseType = options.responseType; // 这句话要放到open初始化请求调用之后
     engine.onreadystatechange = () => {
@@ -28,14 +28,14 @@ function emitEngine(options) {
       let headers = {};
       try {
         let items = (engine.getAllResponseHeaders() || "").split("\r\n");
-      items.pop();
-      items.forEach((e) => {
-        if (!e) return;
-        let key = e.split(":")[0]
-        headers[key] = engine.getResponseHeader(key)
-      })
+        items.pop();
+        items.forEach((e) => {
+          if (!e) return;
+          let key = e.split(":")[0]
+          headers[key] = engine.getResponseHeader(key)
+        })
       } catch (error) {
-        
+
       }
       let body = {
         data: responseData,
@@ -46,8 +46,8 @@ function emitEngine(options) {
         statusText: engine.statusText
       };
       if (engine.readyState == 4 && engine.status >= 200 && engine.status < 300 || engine.status == 304) {
-        
-        if (engine.getResponseHeader('Content-Type').includes('json')&&!utils.isPlainObject(responseData)) {
+
+        if (engine.getResponseHeader('Content-Type').includes('json') && !utils.isPlainObject(responseData)) {
           responseData = JSON.parse(responseData);
         }
         res(body)
@@ -75,23 +75,14 @@ function emitEngine(options) {
       } catch (error) {
       }
     }
-    console.log(realData)
-    console.log(typeof realData)
-    engine.send(realData);
+
     engine.onerror = (e) => {
-      rej({msg:e.msg||'Network Error',data:{},engine,options,status:engine.status})
+      rej({ msg: e.msg || 'Network Error', data: {}, engine, options, status: engine.status })
     }
     engine.ontimeout = (e) => {
-      rej({data:{},msg:`timeout ${engine.timeout}ms`,engine,options,status:engine.status})
+      rej({ data: {}, msg: `timeout ${engine.timeout}ms`, engine, options, status: engine.status })
     }
-  //     // 貌似用不上这个了
-  //   engine.onabort = () => {
-  //     if (!engine) {
-  //       return;
-  //     }
-  //     reject({msg:'Request aborted', options,data:{},engine});
-  //     engine = null;
-  //   }
+
   })
 }
 

@@ -1,48 +1,45 @@
 const path = require('path')
 const HtmlWebackPlugin = require('html-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const env = process.env.NODE_ENV==='dev';
+const env = process.env.NODE_ENV === 'dev';
+console.log('env', env)
 const webpack = require('webpack')
-const targetPath = env?path.resolve(__dirname,'demo') :path.resolve(__dirname,'dist');
+const desc = {
+    filename: env ? "[name].js" : "[name].min.js",
+    targetPath: env ? path.resolve(__dirname, 'test') : path.resolve(__dirname, 'dist'),
+}
 const output = {
-        filename: "[name].js",
-        path: targetPath,
-        // libraryExport: 'default', 
-        library: 'mole',
-        libraryTarget: 'umd' || 'global',
-        // path: __dirname + '/dist/',
-        sourceMapFilename: '[name].map',
-    }
+    filename: desc.filename,
+    path: desc.targetPath,
+    libraryExport: 'default',
+    library: 'mole',
+    libraryTarget: 'umd',
+    sourceMapFilename: '[name].map',
+}
 const entry = {
-        mole: './src/mole.js'  // 用于浏览器端
+    mole: './src/mole.js'
 }
-const devtool = env ? false:'inline-source-map';
-const mode = env ?'development':'production';
+const devtool = env ? 'inline-source-map' : false;
 const extend = {
-    wx:'',      // 微信小程序
-    taro:'',    //taro
-    uniapp:'',  //uniapp
-    node:'',    //node
-    my:''       //阿里小程序
+    wx: '',      // 微信小程序
+    taro: '',    //taro
+    uniapp: '',  //uniapp
+    node: '',    //node
+    my: ''       //阿里小程序
 }
-const plugins =env ? [
-    new HtmlWebackPlugin({ template: './src/index.html' })]:
-    [new CleanWebpackPlugin(['dist']),
-    new HtmlWebackPlugin({ template: './src/index.html' }),
-new webpack.ProvidePlugins({
-    $:'jquery'
-})
- ];
+const plugins = env ? [
+    new HtmlWebackPlugin({ template: './src/index.html' })] :
+    [new CleanWebpackPlugin(), new HtmlWebpackPlugin({ template: './src/index.html' }),];
 module.exports = {
     devtool,
-    mode: process.env.NODE_ENV==='dev'?'development':'production',
-    devServer:{  // npm install webpack-dev-server -D 在package.json中配置 webpack-dev-server
-        contentBase:path.resolve(__dirname,'demo'), 
-        open:true
+    mode: process.env.NODE_ENV === 'dev' ? 'development' : 'production',
+    devServer: {  // npm install webpack-dev-server -D 在package.json中配置 webpack-dev-server
+        contentBase: path.resolve(__dirname, 'test'),
+        open: true
     },
-    externals:['lodash'], // 打包中忽略这个库
+    externals: ['lodash'], // 打包中忽略这个库
     entry,
     output,
     plugins,
@@ -55,63 +52,22 @@ module.exports = {
     //     })],
     //   },
     module: {
-        rules: [{
-            test: /\.(jpg|jpeg|png|gif)$/,
-            use: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        "presets": [['@babel/preset-env', {
+                            "useBuiltIns": "usage",//只转化使用的api
+                            "corejs": 2 //@babel/pollyfill 封装高版本的api
+                        }]],
+                        plugins: [require('@babel/plugin-proposal-class-properties')]
 
-                loader: 'url-loader',
-                // options:'[name].[ext]',
-                options: {
-                    name: '[name].[ext]',
-                    outputPath: 'static/img/',
-                    limit: 2048
-                },
+                    }
+                }
             }
-        },
-        {
-            test: /\.(eot|ttf|svg)$/,
-            use: {
-                loader: 'file-loader'
-            }
-        },
-        // {
-        //     test: /\.(sc|c|sa)ss$/,
-        //     // npm install css-loader 處理@import node-scss sass-loader postcss-loader autoprefixer -D
-        //     use: ['style-loader',
-        //         {
-        //             loader: 'css-loader',
-        //             options: {
-            // sourceMap:true,
-        //                 importLoaders: 2
-        //             },
-        //             module: true //開啟模块化打包  css使用的时候 必须使用 import cc from 'cc.scss'
-        //         },
-        //         'sass-loader',
-        // {'loader':'postcss-loader',
-        // options:{
-            // ident:'postcss',
-        //     sourceMap:true,
-        //     plugins:loader=>[
-        //       require('autoprefixer')
-        //     ]
-        // }}
-        //         'postcss-loader']
-        // },
-        {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-              loader: "babel-loader",
-              options: {
-                "presets": [['@babel/preset-env',{
-                    "useBuiltIns": "usage",//只转化使用的api
-                    "corejs": 2 //@babel/pollyfill 封装高版本的api
-                }]],
-                plugins: [require('@babel/plugin-proposal-class-properties')]
-                
-              }
-            }
-          }
         ]
     },
 }

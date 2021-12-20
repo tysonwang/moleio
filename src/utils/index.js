@@ -1,21 +1,21 @@
 
 const utils = {
-    toString(ob){
+    toString(ob) {
         return Object.prototype.toString.call(ob).slice(8, -1).toLowerCase();
     },
     isObject(val) {
         return val && typeof val === 'object';
     },
     isPlainObject(obj) {
-        return this.toString(obj)==='object';
+        return this.toString(obj) === 'object';
     },
     deepCopy(source) {
         if (typeof source != "object") {
             return source;
         }
-        var newObj = source.constructor === Array ? [] : {};  
+        var newObj = source.constructor === Array ? [] : {};
         for (var i in source) {
-            newObj[i] = deepCopy(source[i]);               
+            newObj[i] = deepCopy(source[i]);
         }
         return newObj;
     },
@@ -107,9 +107,8 @@ const utils = {
         _encode(data, "");
         return str;
     },
-    queueIfLock(status, callback) {
-        if (status) {
-           
+    queueIfLock(promise, callback) {
+        if (promise) {
             promise.then(() => { callback() });
         } else {
             callback()
